@@ -1,0 +1,6 @@
+streamlit
+numpy
+statsmodels
+plotly
+polars
+psycopg2
