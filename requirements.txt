@@ -3,4 +3,4 @@ numpy
 statsmodels
 plotly
 polars
-psycopg2
+psycopg2-binary
