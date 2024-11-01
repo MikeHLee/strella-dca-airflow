@@ -6,6 +6,9 @@ from statsmodels.tsa.stattools import grangercausalitytests
 import datetime
 import plotly.express as px
 
+st.set_page_config(page_title="Room Similarity", 
+				   page_icon = "./images/strella_logo.jpeg") 
+
 def create_connection_string(user, password, host, port, database):
     return f"postgresql://{user}:{password}@{host}:{port}/{database}?sslmode=require&options=-c%20statement_timeout%3D60s"
 
@@ -812,4 +815,14 @@ def run():
             fig.update_layout(showlegend=False)
             st.plotly_chart(fig)
 
-run()
+if "authorized" not in st.session_state:
+    st.session_state["authorized"] = False
+if st.session_state["authorized"]:
+    run()
+else:
+    st.subheader("Security Question")
+    answer = st.text_input(label="Approximately many 🍎s does the Strella Maturity Scoring Algorithm supervise?")
+    if answer == st.secrets.authorization.SECURITY_QUESTION_ANSWER:
+        st.success("You got it!")
+        st.session_state["authorized"] = True
+        st.rerun()
