@@ -5,6 +5,8 @@ import numpy as np
 from statsmodels.tsa.stattools import grangercausalitytests
 import datetime
 import plotly.express as px
+import plotly.graph_objects as go
+from numpy import random
 
 st.set_page_config(page_title="Room Similarity", 
 				   page_icon = "./images/strella_logo.jpeg") 
@@ -533,6 +535,75 @@ def run():
                 print(delta_o2_p_independence_1hr_lag, "\n")
                 print(delta_temp_c_p_independence_1hr_lag, "\n")
                 print(delta_c2h4_p_independence_1hr_lag, "\n")
+
+            #Raw measurements
+            st.subheader("Room Sensor Data")
+            st.info("These are the raw and delta sensor timeseries from all rooms under consideration. Click each measurement name in the legend to toggle its visibility on the graph.")
+            # Define the styles for each measurement field
+            styles = {
+                "co2_ppm": dict(dash='dash'),
+                "o2_ppm": dict(dash='dot'),
+                "temp_c": dict(dash='longdash'),
+                "c2h4_ppm": dict(dash='dashdot'),
+            }
+
+            # Create a new figure
+            fig = go.Figure()
+
+            # Loop over the items in the dictionary
+            for key, df in selected_rooms_data.items():
+                # Generate a random color for this dataframe
+                color = '#%02x%02x%02x' % (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+
+                # Loop over the measurement fields
+                for field, style in styles.items():
+                    # Add a line to the figure for this field
+                    fig.add_trace(go.Scatter(
+                        x=df['time'],
+                        y=df[field],
+                        mode='lines',
+                        name=f'{key} {field}',
+                        line=dict(color=color, **style),
+                    ))
+
+            # Show the figure
+            fig.update_layout(
+                title_text='Raw Measurements',  # your title
+            )
+            st.plotly_chart(fig)
+
+            # Define the styles for each measurement field
+            styles = {
+                "co2_ppm_delta": dict(dash='dash'),
+                "o2_ppm_delta": dict(dash='dot'),
+                "temp_c_delta": dict(dash='longdash'),
+                "c2h4_ppm_delta": dict(dash='dashdot'),
+            }
+
+            # Create a new figure
+            fig = go.Figure()
+
+            # Loop over the items in the dictionary
+            for key, df in selected_rooms_data.items():
+                # Generate a random color for this dataframe
+                color = '#%02x%02x%02x' % (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+
+                # Loop over the measurement fields
+                for field, style in styles.items():
+                    # Add a line to the figure for this field
+                    fig.add_trace(go.Scatter(
+                        x=df['time'],
+                        y=df[field],
+                        mode='lines',
+                        name=f'{key} {field}',
+                        line=dict(color=color, **style),
+                    ))
+
+            # Show the figure
+            fig.update_layout(
+                title_text='Delta Measurements',  # your title
+            )
+            st.plotly_chart(fig)
 
             #Likely groups (collections of rooms likely to be sharing air / scrubbing / ventilation)
             st.subheader("Raw Measurement Correlations")
